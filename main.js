@@ -57,6 +57,7 @@ Ball.prototype.draw = function() {
 
 //updates the x, y and the velocity direction of the ball.
 Ball.prototype.update = function() {
+
   if ((this.x + this.size) >= width) {
     this.velX = -(this.velX);
   }
@@ -78,6 +79,7 @@ Ball.prototype.update = function() {
 }
 
 
+
 //Animating the balls
 var balls = [];
 
@@ -96,6 +98,31 @@ while (balls.length < 25) {
 }
 
 
+//Detecting collisions
+Ball.prototype.detectCollision = function() {
+  for(var i = 0; i < 25; i++){
+    if(this !== balls[i]){
+      var delx = this.x - balls[i].x;
+      var dely = this.y - balls[i].y;
+
+      var dist = Math.sqrt(delx * delx + dely*dely);
+      if(dist < this.size + balls[i].size){
+        this.color = balls[i].color = 'rgb(' +random(0,255) + ',' + random(0,255) + ',' + random(0,255) + ')';
+ 
+        //does not preserve angular momentum as such! but still, looks good!
+        //Just swapping the velocity directions of the two colliding balls.
+        var t1 = this.velX;
+        var t2 = this.velY;
+        this.velX = balls[i].velX;
+        this.velY = balls[i].velY;
+        balls[i].velX = t1;
+        balls[i].velY = t2;
+      }
+    }
+  }
+}
+
+
 //updates the display , since several frames per second is created, a smooth animation is created
 function loop() {
   
@@ -111,6 +138,7 @@ function loop() {
   for (var i = 0; i < balls.length; i++) {
     balls[i].draw();
     balls[i].update();
+    balls[i].detectCollision();
   }
 
   
